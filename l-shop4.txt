@@ -38,7 +38,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.36"
+    Config["Version",string] = "1.37"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -650,6 +650,12 @@ if(chatClk(owner())){
                     debug(K + " " + V)
                 }
             }
+            if(Msg[2,string] == "shipments"){
+                debug("List of shipments:")
+                foreach(K, V:string = Shipments){
+                    debug(K + " " + V)
+                }
+            }
         } else {
             debug("Invalid command.")
         }
@@ -683,7 +689,7 @@ if(chatClk(owner())){
         debug("!setvip <name> <1/0> -- Set's a player's VIP setting. 1 = VIP, 0 = User")
         debug("!checkupdate -- Check for a update?")
         debug("!update -- Updates if an update is available.")
-        debug("!view accounts -- View's ALL accounts and set data.")
+        debug("!view <shipments/accounts> -- View set data.")
     }
 }
 
