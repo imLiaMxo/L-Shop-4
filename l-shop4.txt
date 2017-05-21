@@ -38,7 +38,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.34"
+    Config["Version",string] = "1.35"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -674,15 +674,15 @@ if(chatClk(owner())){
     }
     if(Cmd == "!help"){
         hideChat(1)
-        print("----------------------------------------------")
-        print("!addship -- Adds shipment to store (Shipment you're looking at)")
-        print("!adduser <name> -- Creates user")
-        print("!save -- Saves the accounts to a file.")
-        print("!setcash <name> <amount> -- Set's a player's account's balance")
-        print("!setvip <name> <1/0> -- Set's a player's VIP setting. 1 = VIP, 0 = User")
-        print("!checkupdate -- Check for a update?")
-        print("!update -- Updates if an update is available.")
-        print("!view accounts -- View's ALL accounts and set data.")
+        debug("----------------------------------------------")
+        debug("!addship -- Adds shipment to store (Shipment you're looking at)")
+        debug("!adduser <name> -- Creates user")
+        debug("!save -- Saves the accounts to a file.")
+        debug("!setcash <name> <amount> -- Set's a player's account's balance")
+        debug("!setvip <name> <1/0> -- Set's a player's VIP setting. 1 = VIP, 0 = User")
+        debug("!checkupdate -- Check for a update?")
+        debug("!update -- Updates if an update is available.")
+        debug("!view accounts -- View's ALL accounts and set data.")
     }
 }
 
