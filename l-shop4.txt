@@ -38,7 +38,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.33"
+    Config["Version",string] = "1.34"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -1060,50 +1060,58 @@ if(State == 7){
 }
 
 if(CheckUpdate){
-    httpRequest("https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/VERSION")
-    
-    if(httpClk() & httpRequestUrl() == "https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/VERSION"){
-        Config["NewVersion",string] = httpData():trim()
-        timer("update verify",1000)
-    }
-    
-    if(clk("update verify")){
-        if(Config["Version",string] != Config["NewVersion",string]){
-            debug("New Version Detected: Type !update to download version [" + Config["NewVersion",string] + "]")
-            UpdateConf = 1
-            CheckUpdate = 0
-        } else {
-            debug("You're currently up to date!")
-            CheckUpdate = 0
-            UpdateConf = 0
+    #ifdef httpCanRequest()
+        httpRequest("https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/VERSION")
+        
+        if(httpClk() & httpRequestUrl() == "https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/VERSION"){
+            Config["NewVersion",string] = httpData():trim()
+            timer("update verify",1000)
         }
-    }
+        
+        if(clk("update verify")){
+            if(Config["Version",string] != Config["NewVersion",string]){
+                debug("New Version Detected: Type !update to download version [" + Config["NewVersion",string] + "]")
+                UpdateConf = 1
+                CheckUpdate = 0
+            } else {
+                debug("You're currently up to date!")
+                CheckUpdate = 0
+                UpdateConf = 0
+            }
+        }
+    #else
+        debug("Cannot do this function due to HTTP functions not being available!"
+    #endif
 }
 
 if(Update){
     
-    timer("begin_update",1000)
-    
-    if(clk("begin_update")){
-        if(httpCanRequest()){
-            httpRequest("https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/l-shop4.txt")
-        } else {
-            debug("Cannot reach address to update, please try again or download manually. How to is on the github.")
-            debug("https://github.com/imLiaMxo/L-Shop-4/blob/master/README.md")
+    #ifdef httpCanRequest()
+        timer("begin_update",1000)
+        
+        if(clk("begin_update")){
+            if(httpCanRequest()){
+                httpRequest("https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/l-shop4.txt")
+            } else {
+                debug("Cannot reach address to update, please try again or download manually. How to is on the github.")
+                debug("https://github.com/imLiaMxo/L-Shop-4/blob/master/README.md")
+            }
         }
-    }
-    if(httpClk() & httpRequestUrl() == "https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/l-shop4.txt"){
-        Code = httpData()
-        if(fileCanWrite()){
-            fileWrite(">e2shared/"+"lshop4 - " + Config["NewVersion",string] + ".txt",Code)
-            debug("Saved file to: e2shared/"+"lshop4 - " + Config["NewVersion",string] + ".txt  !")
-            Update = 0
-        } else {
-            debug("Failed to download latest E2! Please do it manually! How to is on the github.")
-            debug("https://github.com/imLiaMxo/L-Shop-4/blob/master/README.md")
-            Update = 0
+        if(httpClk() & httpRequestUrl() == "https://raw.githubusercontent.com/imLiaMxo/L-Shop-4/master/l-shop4.txt"){
+            Code = httpData()
+            if(fileCanWrite()){
+                fileWrite(">e2shared/"+"lshop4 - " + Config["NewVersion",string] + ".txt",Code)
+                debug("Saved file to: e2shared/"+"lshop4 - " + Config["NewVersion",string] + ".txt  !")
+                Update = 0
+            } else {
+                debug("Failed to download latest E2! Please do it manually! How to is on the github.")
+                debug("https://github.com/imLiaMxo/L-Shop-4/blob/master/README.md")
+                Update = 0
+            }
         }
-    }
+    #else
+        debug("Cannot do this function due to HTTP functions not being available!"
+    #endif
 }
 
 if(Config["Fancy",number] == 1){
