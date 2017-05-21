@@ -38,7 +38,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.35"
+    Config["Version",string] = "1.36"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -48,6 +48,7 @@ if(first()){
     Fire = 0
     Players = players()
     U:entity():setAlpha(0)
+    U:entity():propNotSolid(1)
     U:entity():setAng(ang(0,0,180))
 
     # Functions [Please, don't touch this shit.]
