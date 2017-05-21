@@ -10,6 +10,6 @@ Manual Installation:
 5. Go ingame, and get the Expression tool out, if you have just launched the game, you'll see the .txt file, if not you need to press the  'Update' button and then it shall appear.
 
 Changelog:
--> 1.35 (Fixed chat commands + view data) 21/05/2017, 20:05
--> 1.34 (Made it so it works on servers with HTTP disabled using #ifdef)  21/05/2017, 20:01
--> 1.33 (Added Automatic Updating) - 21/05/2017, 19:55
+* -> 1.35 (Fixed chat commands + view data) 21/05/2017, 20:05
+* -> 1.34 (Made it so it works on servers with HTTP disabled using #ifdef)  21/05/2017, 20:01
+* -> 1.33 (Added Automatic Updating) - 21/05/2017, 19:55
