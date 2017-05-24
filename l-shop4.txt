@@ -1,6 +1,6 @@
 @name lShop 4
 @inputs [EGP U]:wirelink
-@persist [State E S VIPTick Amount Load Current Add New Allowed Page UpdatePage Total Percent CheckUpdate Update UpdateConf]:number
+@persist [State E S VIPTick Amount Load Current Add New Allowed Page UpdatePage Total Percent CheckUpdate Update UpdateConf Type]:number
 @persist [InsertShipment User Player]:entity
 @persist [Config Accounts Texts Shipments Info]:table
 @persist [Pos Col]:vector
@@ -35,10 +35,11 @@ if(first()){
     
     # New in v1.33
     Config["Updates",number] = 1 #<-- Checks online for updates :D yes. No longer have to ask Liam for updates. :)
+    Config["BackgroundColor",vector] = vec(12, 156, 0) #<-- RGB of background colour. #DEF vec(64, 0, 0)
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.37"
+    Config["Version",string] = "1.38"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -174,7 +175,7 @@ if(changed(round(State))){
     
     if(!Config["Background",number]){
         EGP:egpBox(1,vec2(256,256),vec2(522,522))
-        EGP:egpColor(1,vec(64,0,0))
+        EGP:egpColor(1,Config["BackgroundColor",vector])
         EGP:egpMaterial(1,"VGUI/gradient_down")
     } else {
         #EGP:circle_background()
@@ -217,7 +218,7 @@ if(changed(round(State))){
     
     if(State == 0){
         EGP:egpCircle(2,vec2(256,200),vec2(83,83))
-        EGP:egpColor(2,vec(57,0,0))
+        EGP:egpColor(2,Config["BackgroundColor",vector] - vec(7,0,0))
         
         EGP:egpCircle(3,vec2(256,200),vec2(80,80))
         EGP:egpColor(3,vec(45,45,45))
@@ -226,7 +227,7 @@ if(changed(round(State))){
         EGP:egpColor(5,vec(45,45,45))
         
         EGP:egpBoxOutline(6,vec2(256,256),vec2(512,60))
-        EGP:egpColor(6,vec(57,0,0))
+        EGP:egpColor(6,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(6,2)
         
         EGP:egpText(7,"L-Shop 4",vec2(256,261))
@@ -277,7 +278,7 @@ if(changed(round(State))){
         EGP:egpBox(13,vec2(186,356),vec2(30,30))
         
         EGP:egpCircle(14,vec2(186,356),vec2(10,10))
-        EGP:egpColor(14,vec(47,0,0))
+        EGP:egpColor(14,Config["BackgroundColor",vector] - vec(7,0,0))
         
         EGP:egpText(15,"Add VIP for $" + Config["VIPCost",number]:toString() + "?",vec2(286,362))
         EGP:egpAlign(15,1,15)
@@ -356,7 +357,7 @@ if(changed(round(State))){
         EGP:egpColor(40,vec(45,45,45))
         
         EGP:egpBoxOutline(41,vec2(256,256),vec2(150,60))
-        EGP:egpColor(41,vec(45,0,0))
+        EGP:egpColor(41,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(41,2)
         
         # -
@@ -364,7 +365,7 @@ if(changed(round(State))){
         EGP:egpColor(42,vec(45,45,45))
         
         EGP:egpBoxOutline(43,vec2(156,256),vec2(50,50))
-        EGP:egpColor(43,vec(45,0,0))
+        EGP:egpColor(43,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(43,2)
         
         # +
@@ -372,7 +373,7 @@ if(changed(round(State))){
         EGP:egpColor(44,vec(45,45,45))
         
         EGP:egpBoxOutline(45,vec2(356,256),vec2(50,50))
-        EGP:egpColor(45,vec(45,0,0))
+        EGP:egpColor(45,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(45,2)
         
         # - Text
@@ -423,7 +424,7 @@ if(changed(round(State))){
         EGP:egpColor(40,vec(45,45,45))
         
         EGP:egpBoxOutline(41,vec2(256,256),vec2(150,60))
-        EGP:egpColor(41,vec(45,0,0))
+        EGP:egpColor(41,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(41,2)
         
         # -
@@ -431,7 +432,7 @@ if(changed(round(State))){
         EGP:egpColor(42,vec(45,45,45))
         
         EGP:egpBoxOutline(43,vec2(156,256),vec2(50,50))
-        EGP:egpColor(43,vec(45,0,0))
+        EGP:egpColor(43,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(43,2)
         
         # +
@@ -439,7 +440,7 @@ if(changed(round(State))){
         EGP:egpColor(44,vec(45,45,45))
         
         EGP:egpBoxOutline(45,vec2(356,256),vec2(50,50))
-        EGP:egpColor(45,vec(45,0,0))
+        EGP:egpColor(45,Config["BackgroundColor",vector] - vec(7,0,0))
         EGP:egpSize(45,2)
         
         # - Text
