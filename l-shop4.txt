@@ -569,7 +569,6 @@ if(changed(round(State))){
     }
     
     if(State == 8){
-        User = owner()
         EGP:egpBoxOutline(10,vec2(256,256),vec2(456,400))
         EGP:egpColor(10,vec(45,45,45))
         EGP:egpSize(10,3)
@@ -613,7 +612,6 @@ if(changed(round(State))){
     }
     
     if(State == 9){
-        User = owner()
         EGP:egpBoxOutline(81,vec2(256,256),vec2(400,400))
         EGP:egpSize(81,3)
         EGP:egpColor(81,vec(45,45,45))
