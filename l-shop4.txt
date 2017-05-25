@@ -1,10 +1,10 @@
 @name lShop 4
-@inputs [EGP U]:wirelink
-@persist [State E S VIPTick Amount Load Current Add New Allowed Page UpdatePage Total Percent CheckUpdate Update UpdateConf Type]:number
+@inputs [EGP U]:wirelink StoredAmount
+@persist [State E S VIPTick Amount Load Current Add New Allowed Page UpdatePage Total Percent CheckUpdate Update UpdateConf Type HowMuch]:number
 @persist [InsertShipment User Player]:entity
 @persist [Config Accounts Texts Shipments Info]:table
 @persist [Pos Col]:vector
-@outputs Fire
+@outputs SpawnAmount
 
 #[  
     The Notifications are used to give hints towards a user. Want to see what they look like? Change Config["Test",number] = 0  to 1
@@ -39,7 +39,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.38"
+    Config["Version",string] = "1.40"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -108,8 +108,7 @@ if(first()){
                 # You could add more parameters here
                 "Balance" = 0,
                 "Sold" = 0,
-                "VIP" = 0,
-                "CashType" = 0
+                "VIP" = 0
             )
         }
     }
@@ -155,8 +154,7 @@ if(first()){
         "Add Funds",
         "Withdraw Funds",
         "Purchase VIP",
-        "Remove VIP",
-        "Payment Type"
+        "Remove VIP"
     )
     
     if(Config["Fancy",number] == 1){Pos = entity():pos()}
@@ -567,7 +565,64 @@ if(changed(round(State))){
         EGP:egpSize(68,40)
         EGP:egpAlign(68,1,68)
         EGP:egpAlpha(68,0)
-    }   
+        
+    }
+    
+    if(State == 8){
+        User = owner()
+        EGP:egpBoxOutline(10,vec2(256,256),vec2(456,400))
+        EGP:egpColor(10,vec(45,45,45))
+        EGP:egpSize(10,3)
+        
+        EGP:egpTextLayout(70, "Hello " + User:name() + "!\nYou're purchasing " + Shipments[Page,table]["name",string] + " for $" + Shipments[Page,table]["price",number] + "\nHow would you like to pay?\nCash or Money Request?",vec2(117, 110), vec2(310, 460))
+        EGP:egpSize(70,30)
+        
+        EGP:egpBoxOutline(71,vec2(186,375),vec2(106,30))
+        EGP:egpBoxOutline(72,vec2(326,375),vec2(106,30))
+        
+        EGP:egpText(73,"Cash",vec2(186,360))
+        EGP:egpSize(73,30)
+        EGP:egpAlign(73,1)
+        
+        EGP:egpText(74,"Request",vec2(326,360))
+        EGP:egpSize(74,30)
+        EGP:egpAlign(74,1)
+        
+        EGP:egpBoxOutline(75,vec2(256,410),vec2(150,30))
+        EGP:egpAlpha(75,0)
+        
+        EGP:egpText(76,"Purchase",vec2(256,395))
+        EGP:egpSize(76,30)
+        EGP:egpAlign(76,1)
+        EGP:egpAlpha(76,0)
+        
+        EGP:egpBox(78,vec2(256,256),vec2(395,45))
+        EGP:egpColor(78,vec4(45,45,45,200))
+        EGP:egpAlpha(78,0)
+        
+        EGP:egpBoxOutline(79,vec2(256,256),vec2(395,45))
+        EGP:egpSize(79,3)
+        EGP:egpColor(79,vec(45,45,45))
+        EGP:egpAlpha(79,0)
+        
+        EGP:egpText(80,"Awaiting Purchase",vec2(256,240))
+        EGP:egpAlign(80,1)
+        EGP:egpSize(80,30)
+        EGP:egpAlpha(80,0)
+        
+    }
+    
+    if(State == 9){
+        User = owner()
+        EGP:egpBoxOutline(81,vec2(256,256),vec2(400,400))
+        EGP:egpSize(81,3)
+        EGP:egpColor(81,vec(45,45,45))
+        
+        EGP:egpTextLayout(82,"Please insert $" + Total +" into the pot. Once the payment is processed you will receive your weapon.",vec2(80,64),vec2(350,400))
+        EGP:egpAlign(82,1)
+        EGP:egpSize(82,42)
+        
+    }
 }
 
 if(fileClk()){
@@ -993,44 +1048,13 @@ if(State == 6){
             UpdatePage = 1
         }
         if(onClick(57)){
-            Sold = Accounts:getSold(User:steamID()):toNumber()
-            if(Accounts:getVIP(User:steamID()) == "1"){
-                Total = vipProfit(Shipments[Page,table]["price",number])
-            } else {
-                Total = Shipments[Page,table]["price",number]
-            }
-            if(Total < Accounts:getCash(User:steamID()):toNumber()){
-                Current = Accounts:getCash(User:steamID()):toNumber()
-                Accounts:setData(User:steamID(),(Current - Total))
-                timer("Init",1000)
-                State = 7
-                Accounts:setSold(User:steamID(),1)
-            } elseif(Total > Accounts:getCash(User:steamID()):toNumber() && Accounts:getCash(User:steamID()):toNumber() > 0) {
-                Current = Accounts:getCash(User:steamID()):toNumber()
-                Total = (Total - Current)
-                moneyRequest(User,Total,"L-Shop 4 -> Purchase ($" + Total + ")",10)
-            } elseif(Total > Accounts:getCash(User:steamID()):toNumber()) {
-                moneyRequest(User,Total,"L-Shop 4 -> Purchase ($" + Total + ")",10)
-            }
+            State = 8
         }
-    }
-    if(moneyClk()){
-        if(Accounts:getCash(User:steamID()):toNumber() <= Total){
-            Accounts:setData(User:steamID(),0)
-        } elseif(Accounts:getCash(User:steamID()):toNumber() >= Total){
-            Accounts:setData(User:steamID(),(Current - Total))
-        } elseif(Accounts:getCash(User:steamID()):toNumber() == Total) {
-            Accounts:setData(User:steamID(),0)
-        } elseif(Accounts:getCash(User:steamID()):toNumber() == 0){
-            Accounts:setData(User:steamID(),0)
-        }
-        timer("Init",1000)
-        State = 7
-        Accounts:setSold(User:steamID(),1)
     }
 }
 
 if(State == 7){
+    SpawnAmount = StoredAmount
     Percent = round(EGP:egpSize(3):x() * 100 / 390)
     EGP:egpSize(3,clamp(EGP:egpSize(3) + vec2(10,0), vec2(0,40),vec2(390, 40)))
     EGP:egpSetText(4,"Delivering Weapon " + Percent + "%")
@@ -1042,6 +1066,7 @@ if(State == 7){
             }
         }
     }
+    
     if(clk("Init")){
         U:entity():setPos(Shipments[Page,table]["entity",entity]:pos() + vec(0,0,25))
         U:entity():setAng(ang(0,0,180))
@@ -1063,6 +1088,90 @@ if(State == 7){
                 State = 0
                 exit()
             }
+        }
+    }
+}
+
+if(State == 8){
+    E = User:keyUse()
+    if(changed(E) & E){
+        if(onClick(71)){
+            Type = 1
+            for(I = 75,76){
+                EGP:egpAlpha(I,255)
+            }
+        }
+        if(onClick(72)){
+            Type = 2
+            for(I = 75,76){
+                EGP:egpAlpha(I,255)
+            }
+        }
+        if(onClick(75)){
+            if(Type == 1){
+                State = 9
+                if(Accounts:getVIP(User:steamID()) == "1"){
+                    Total = vipProfit(Shipments[Page,table]["price",number])
+                } else {
+                    Total = Shipments[Page,table]["price",number]
+                }
+            } else {
+                EGP:egpAlpha(78,200)
+                EGP:egpAlpha(79,255)
+                EGP:egpAlpha(80,255)
+                Sold = Accounts:getSold(User:steamID()):toNumber()
+                if(Accounts:getVIP(User:steamID()) == "1"){
+                    Total = vipProfit(Shipments[Page,table]["price",number])
+                } else {
+                    Total = Shipments[Page,table]["price",number]
+                }
+                if(Total < Accounts:getCash(User:steamID()):toNumber()){
+                    Current = Accounts:getCash(User:steamID()):toNumber()
+                    Accounts:setData(User:steamID(),(Current - Total))
+                    timer("Init",1000)
+                    State = 7
+                    Accounts:setSold(User:steamID(),1)
+                } elseif(Total > Accounts:getCash(User:steamID()):toNumber() && Accounts:getCash(User:steamID()):toNumber() > 0) {
+                    Current = Accounts:getCash(User:steamID()):toNumber()
+                    Total = (Total - Current)
+                    moneyRequest(User,Total,"L-Shop 4 -> Purchase ($" + Total + ")",10)
+                } elseif(Total > Accounts:getCash(User:steamID()):toNumber()) {
+                    moneyRequest(User,Total,"L-Shop 4 -> Purchase ($" + Total + ")",10)
+                }
+            }
+        }
+    }
+    if(moneyClk()){
+        if(Accounts:getCash(User:steamID()):toNumber() <= Total){
+            Accounts:setData(User:steamID(),0)
+        } elseif(Accounts:getCash(User:steamID()):toNumber() >= Total){
+            Accounts:setData(User:steamID(),(Current - Total))
+        } elseif(Accounts:getCash(User:steamID()):toNumber() == Total) {
+            Accounts:setData(User:steamID(),0)
+        } elseif(Accounts:getCash(User:steamID()):toNumber() == 0){
+            Accounts:setData(User:steamID(),0)
+        }
+        timer("Init",1000)
+        State = 7
+        Accounts:setSold(User:steamID(),1)
+    }
+}
+
+if(State == 9){
+    if(changed(StoredAmount) && StoredAmount > 0){
+        if(StoredAmount <  Total){
+            HowMuch = (Total - StoredAmount)
+        } else {
+            HowMuch = 0
+        }
+    }
+    
+    if(changed(StoredAmount)){
+        if(StoredAmount >=  Total){
+            Accounts:setSold(User:steamID(),1)
+            State = 7
+        } elseif(changed(StoredAmount) && StoredAmount != 0){
+            EGP:egpSetText(82,"You have not inputted the required amount for your weapon. Please add: $"+ HowMuch:toString() +" for your weapon!")
         }
     }
 }
