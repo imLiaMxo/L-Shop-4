@@ -25,13 +25,14 @@ interval(100)
 if(first()){
     # Configuration [This allows you to config the store. Kinda self explanitory.]
     Config["SaveFile",string] = "l-shop_4.txt"
-    Config["DefaultCost",number] = 5000 #<-- The cost it is to create an account.
-    Config["VIPCost",number] = 50000 #<-- The cost it is to add the VIP feature.
+    Config["DefaultCost",number] = 500 #<-- The cost it is to create an account.
+    Config["VIPCost",number] = 1000 #<-- The cost it is to add the VIP feature.
     Config["ResetRange",number]= 200 #<-- Units away to reset screen. (Auto Logout)
     Config["MaxBalance",number] = 1000000 #<-- Max balance they can have in their account.
     Config["VIPDiscount",number] = 0.75 #<-- Use this as 0.75 (25%). Do 100 - (Discount Percentage) to get this. Example. 60% discount would be 0.40
     Config["Fancy",number] = 0 #<-- Adds OPS, makes E2 look fancy. (Not needed, just got bored half way through... Oh well :P )
     Config["Background",number] = 0 #<-- Sexy BG? Yes or no. 1 = Yes, 0 = No. (THIS ONLY WORKS IF YOU USE #include "lcommands/designs")
+    Config["MoneyPotOption",number] = 1 #<-- Allow Moneypot to be used? 1 = Yes, 0 = No. (If Yes, once 'Purchase' is pressed another screen shows)
     
     # New in v1.33
     Config["Updates",number] = 1 #<-- Checks online for updates :D yes. No longer have to ask Liam for updates. :)
@@ -39,7 +40,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.40"
+    Config["Version",string] = "1.41"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -576,12 +577,15 @@ if(changed(round(State))){
         EGP:egpTextLayout(70, "Hello " + User:name() + "!\nYou're purchasing " + Shipments[Page,table]["name",string] + " for $" + Shipments[Page,table]["price",number] + "\nHow would you like to pay?\nCash or Money Request?",vec2(117, 110), vec2(310, 460))
         EGP:egpSize(70,30)
         
-        EGP:egpBoxOutline(71,vec2(186,375),vec2(106,30))
-        EGP:egpBoxOutline(72,vec2(326,375),vec2(106,30))
+        if(Config["MoneyPotOption",number]){
+            EGP:egpBoxOutline(71,vec2(186,375),vec2(106,30))
+            
+            EGP:egpText(73,"Cash",vec2(186,360))
+            EGP:egpSize(73,30)
+            EGP:egpAlign(73,1)
+        }
         
-        EGP:egpText(73,"Cash",vec2(186,360))
-        EGP:egpSize(73,30)
-        EGP:egpAlign(73,1)
+        EGP:egpBoxOutline(72,vec2(326,375),vec2(106,30))
         
         EGP:egpText(74,"Request",vec2(326,360))
         EGP:egpSize(74,30)
