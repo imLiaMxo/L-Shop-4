@@ -10,6 +10,7 @@ Manual Installation:
 5. Go ingame, and get the Expression tool out, if you have just launched the game, you'll see the .txt file, if not you need to press the  'Update' button and then it shall appear.
 
 Changelog:
+* -> 1.42 (Hints are no longer optional to include, they're permanently in, still optional to use) 28/05/2017, 16:30
 * -> 1.41 (Added Payment Options - Now configurable) 27/05/2016, 17:10
 * -> 1.40 (Added Payment Options - Now Also Requires Money Pot) 25/05/2017, 17:19
 * -> 1.39 (Fixed background bugs, made it so outlines are darker colour of background config) 24/05/2017, 22:18
