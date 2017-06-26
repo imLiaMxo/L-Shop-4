@@ -32,8 +32,9 @@ if(first()){
     Config["Fancy",number] = 0 #<-- Adds OPS, makes E2 look fancy. (Not needed, just got bored half way through... Oh well :P )
     Config["Background",number] = 0 #<-- Sexy BG? Yes or no. 1 = Yes, 0 = No. (THIS ONLY WORKS IF YOU USE #include "lcommands/designs")
     Config["MoneyPotOption",number] = 1 #<-- Allow Moneypot to be used? 1 = Yes, 0 = No. (If Yes, once 'Purchase' is pressed another screen shows)
-    Config["Hints",number] = 1 #<-- Use Hints? 1 = Yes, 0 = No. (No longer optional to include, they're on for good but your choice to use them)
+    Config["Hints",number] = 0 #<-- Use Hints? 1 = Yes, 0 = No. (No longer optional to include, they're on for good but your choice to use them)
     Config["CheckShipAuto",number] = 1 #<-- Remove shipments automatically? Or manually using !checkshipments
+    Config["UseBans",number] = 1 #<-- Ban people from using the shop?
     
     # New in v1.33
     Config["Updates",number] = 1 #<-- Checks online for updates :D yes. No longer have to ask Liam for updates. :)
@@ -41,7 +42,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.43"
+    Config["Version",string] = "1.44"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -102,6 +103,9 @@ if(first()){
     function void table:setPayment(SteamID:string, Value:string){
         Accounts[SteamID,table]["CashType",number] = Value:toNumber()
     }
+    function void table:setBanned(SteamID:string, Value:string){
+        Accounts[SteamID,table]["Banned",number] = Value:toNumber()
+    }
     
     function void createUser(SteamID:string){
         if(!Accounts:exists(SteamID)){
@@ -110,7 +114,8 @@ if(first()){
                 # You could add more parameters here
                 "Balance" = 0,
                 "Sold" = 0,
-                "VIP" = 0
+                "VIP" = 0,
+                "Banned" = 0
             )
         }
     }
@@ -128,6 +133,10 @@ if(first()){
     
     function string table:getVIP(SteamID:string){
         return Accounts[SteamID,table]["VIP",number]:toString()
+    }
+
+    function string table:isBanned(SteamID:string){
+        return Accounts[SteamID,table]["Banned",number]:toString()
     }
     
     function string table:getPayment(SteamID:string){
@@ -787,6 +796,34 @@ if(chatClk(owner())){
             debug("Please check for an update first.")
         }
     }
+    if(Cmd == "!lban"){
+        if(!Msg[2,string]){
+            debug("Invalid syntax...")
+        } else {
+            local Ply = findPlayerByName(Msg[2,string])
+            if(Ply:isPlayer()){
+                local SteamID = Ply:steamID()
+                if(!Accounts:exists(SteamID)){
+                    createUser(SteamID)
+                }
+                if(!Msg[3,string]){
+                    debug("Invalid Syntax...")
+                } else {
+                    if(Msg[3,string] == "1"){
+                        Accounts:setBanned(SteamID,"1")
+                        debug("Banned " + Ply:name() + " from using the E2.")
+                        Ply:debug("You have been banned from using L-Shop 4 indefinately.")
+                    } elseif(Msg[3,string] == "0"){
+                        Accounts:setBanned(SteamID,"0")
+                        debug("Unbanned " + Ply:name() + " from using the E2.")
+                        Ply:debug("You have been unbanned from using L-Shop 4 and can now use it.")
+                    }
+                }
+            } else {
+                debug("No player found...")
+            }
+        }
+    }
     if(Cmd == "!help"){
         hideChat(1)
         debug("----------------------------------------------")
@@ -799,6 +836,7 @@ if(chatClk(owner())){
         debug("!update -- Updates if an update is available.")
         debug("!view <shipments/accounts> -- View set data.")
         debug("!checkshipments -- Remove shipments that are empty.")
+        debug("lban <name> <1/0> -- Bans people from using L-Shop.")
     }
 }
 
@@ -812,8 +850,10 @@ if(State == 0){
     EGP:egpAngle(9,sin(curtime()*1.5)*80)
     if(EGP["User",entity]:isPlayer()){
         User = EGP["User",entity]
-        State = 1
-        timer("Push_Text_Arrays",100)
+        if(Accounts:isBanned(User:steamID()) == "0"){
+            State = 1
+            timer("Push_Text_Arrays",100)
+        }
     }
 }
 
@@ -1263,7 +1303,7 @@ if(CheckUpdate){
             }
         }
     #else
-        debug("Cannot do this function due to HTTP functions not being available!"
+        debug("Cannot do this function due to HTTP functions not being available!")
     #endif
 }
 
@@ -1293,7 +1333,7 @@ if(Update){
             }
         }
     #else
-        debug("Cannot do this function due to HTTP functions not being available!"
+        debug("Cannot do this function due to HTTP functions not being available!")
     #endif
 }
 
@@ -1303,7 +1343,7 @@ if(Config["Fancy",number] == 1){
     holoPos(1,Pos + vec(0,0,sin(curtime()*45) + 30))
     holoModel(1,"hq_sphere")
     holoColor(1,Col)
-    #entity():setPos(holoEntity(1):pos())
+    entity():setPos(holoEntity(1):pos())
     #lightCreate(1,Pos,Col)
 }
 
