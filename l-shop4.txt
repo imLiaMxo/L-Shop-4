@@ -42,7 +42,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.44"
+    Config["Version",string] = "1.45"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -763,15 +763,11 @@ if(chatClk(owner())){
         if(Msg[2,string]){
             if(Msg[2,string] == "accounts"){
                 debug("List of accounts:")
-                foreach(K , V:string = Accounts){
-                    debug(K + " " + V)
-                }
+                printTable(Accounts)
             }
             if(Msg[2,string] == "shipments"){
                 debug("List of shipments:")
-                foreach(K, V:string = Shipments){
-                    debug(K + " " + V)
-                }
+                printTable(Shipments)
             }
         } else {
             debug("Invalid command.")
