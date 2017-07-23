@@ -1,6 +1,6 @@
 @name lShop 4
 @inputs [EGP U]:wirelink StoredAmount
-@persist [State E S VIPTick Amount Load Current Add New Allowed Page UpdatePage Total Percent CheckUpdate Update UpdateConf Type HowMuch CheckShip]:number
+@persist [State E S VIPTick Amount Load Current Add New Allowed Page UpdatePage Total Percent CheckUpdate Update UpdateConf Type HowMuch CheckShip Price]:number
 @persist [InsertShipment User Player]:entity
 @persist [Config Accounts Texts Shipments Info]:table
 @persist [Pos Col]:vector
@@ -42,7 +42,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.45"
+    Config["Version",string] = "1.46"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -100,11 +100,21 @@ if(first()){
     function void table:setRank(SteamID:string, Value:string){
         Accounts[SteamID,table]["VIP",number] = Value:toNumber()
     }
+    
     function void table:setPayment(SteamID:string, Value:string){
         Accounts[SteamID,table]["CashType",number] = Value:toNumber()
     }
+    
     function void table:setBanned(SteamID:string, Value:string){
         Accounts[SteamID,table]["Banned",number] = Value:toNumber()
+    }
+    
+    function void table:setModerator(SteamID:string, Value:string){
+        Accounts[SteamID,table]["Moderator",number] = Value:toNumber()
+    }
+    
+    function void table:setClearance(SteamID:string, Value:string){
+        Accounts[SteamID,table]["CLevel",number] = Value:toNumber()
     }
     
     function void createUser(SteamID:string){
@@ -115,7 +125,9 @@ if(first()){
                 "Balance" = 0,
                 "Sold" = 0,
                 "VIP" = 0,
-                "Banned" = 0
+                "Banned" = 0,
+                "Moderator" = 0,
+                "CLevel" = 0
             )
         }
     }
@@ -134,13 +146,17 @@ if(first()){
     function string table:getVIP(SteamID:string){
         return Accounts[SteamID,table]["VIP",number]:toString()
     }
+    
+    function string table:getModerator(SteamID:string){
+        return Accounts[SteamID,table]["Moderator",number]:toString()
+    }
 
     function string table:isBanned(SteamID:string){
         return Accounts[SteamID,table]["Banned",number]:toString()
     }
     
-    function string table:getPayment(SteamID:string){
-        return Accounts[SteamID,table]["CashType",number]:toString()
+    function string table:getClearance(SteamID:string){
+        return Accounts[SteamID,table]["CLevel",number]:toString()
     }
     
     function string debug(Text:string){
@@ -620,7 +636,11 @@ if(changed(round(State))){
         EGP:egpColor(10,vec(45,45,45))
         EGP:egpSize(10,3)
         
-        EGP:egpTextLayout(70, "Hello " + User:name() + "!\nYou're purchasing " + Shipments[Page,table]["name",string] + " for $" + Shipments[Page,table]["price",number] + "\nHow would you like to pay?\nCash or Money Request?",vec2(117, 110), vec2(310, 460))
+        if(Accounts:getVIP(User:steamID()) == "1"){
+            EGP:egpTextLayout(70, "Hello " + User:name():replace("[Blue]",""):replace("[Black]",""):replace("%b",""):replace("%0",""):replace("%1",""):replace("%2",""):replace("%3",""):replace("%4",""):replace("%5",""):replace("%6",""):replace("%7",""):replace("%8",""):replace("%9",""):replace("[red]",""):replace("[black]",""):replace("[yellow]",""):replace("[teal]",""):replace("[pink]",""):replace("%f","") + "!\nYou're purchasing " + Shipments[Page,table]["name",string] + " for $" + Price + "\nHow would you like to pay?\nCash or Money Request?",vec2(117, 110), vec2(310, 460))
+        } else {
+            EGP:egpTextLayout(70, "Hello " + User:name():replace("[Blue]",""):replace("[Black]",""):replace("%b",""):replace("%0",""):replace("%1",""):replace("%2",""):replace("%3",""):replace("%4",""):replace("%5",""):replace("%6",""):replace("%7",""):replace("%8",""):replace("%9",""):replace("[red]",""):replace("[black]",""):replace("[yellow]",""):replace("[teal]",""):replace("[pink]",""):replace("%f","") + "!\nYou're purchasing " + Shipments[Page,table]["name",string] + " for $" + Shipments[Page,table]["price",number] + "\nHow would you like to pay?\nCash or Money Request?",vec2(117, 110), vec2(310, 460))
+        }
         EGP:egpSize(70,30)
         
         if(Config["MoneyPotOption",number]){
@@ -666,7 +686,11 @@ if(changed(round(State))){
         EGP:egpSize(81,3)
         EGP:egpColor(81,vec(45,45,45))
         
-        EGP:egpTextLayout(82,"Please insert $" + Total +" into the pot. Once the payment is processed you will receive your weapon.",vec2(80,64),vec2(350,400))
+        if(Accounts:getVIP(User:steamID()) == "1"){
+            EGP:egpTextLayout(82,"Please insert $" + Price +" into the pot. Once the payment is processed you will receive your weapon.",vec2(80,64),vec2(350,400))
+        } else {
+            EGP:egpTextLayout(82,"Please insert $" + Total +" into the pot. Once the payment is processed you will receive your weapon.",vec2(80,64),vec2(350,400))
+        }
         EGP:egpAlign(82,1)
         EGP:egpSize(82,42)
         
@@ -716,7 +740,7 @@ if(chatClk(owner())){
                 if(Ship:isValid() & Ship:type() == "spawned_shipment") {
                     local ShipmentData = table()
                     ShipmentData["entity", entity] = Ship
-                    ShipmentData["name", string] = Ship:shipmentName()
+                    ShipmentData["name", string] = Ship:shipmentName():replace("x10",""):replace("x5",""):replace("x1","")
                     ShipmentData["price", number] = round((Ship:shipmentPrice() / 10) + (Ship:shipmentPrice() / 10 * 1.25))
                     ShipmentData["model", string] = Ship:shipmentModel()
                     ShipmentData["stock",number] = Ship:shipmentAmount()
@@ -1137,6 +1161,9 @@ if(State == 6){
             UpdatePage = 1
         }
         if(onClick(57)){
+            if(Accounts:getVIP(User:steamID()) == "1"){
+                Price = vipProfit(Shipments[Page, table]["price",number])
+            }
             State = 8
         }
     }
