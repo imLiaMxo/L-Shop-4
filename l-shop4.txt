@@ -28,10 +28,10 @@ if(first()){
     Config["VIPCost",number] = 1000 #<-- The cost it is to add the VIP feature.
     Config["ResetRange",number]= 200 #<-- Units away to reset screen. (Auto Logout)
     Config["MaxBalance",number] = 10000 #<-- Max balance they can have in their account.
-    Config["VIPDiscount",number] = 0.75 #<-- Use this as 0.75 (25%). Do 100 - (Discount Percentage) to get this. Example. 60% discount would be 0.40
+    Config["VIPDiscount",number] = 0.35 #<-- Use this as 0.75 (25%). Do 100 - (Discount Percentage) to get this. Example. 60% discount would be 0.40
     Config["Fancy",number] = 0 #<-- Adds OPS, makes E2 look fancy. (Not needed, just got bored half way through... Oh well :P )
     Config["Background",number] = 0 #<-- Sexy BG? Yes or no. 1 = Yes, 0 = No. (THIS ONLY WORKS IF YOU USE #include "lcommands/designs")
-    Config["MoneyPotOption",number] = 1 #<-- Allow Moneypot to be used? 1 = Yes, 0 = No. (If Yes, once 'Purchase' is pressed another screen shows)
+    Config["MoneyPotOption",number] = 0 #<-- Allow Moneypot to be used? 1 = Yes, 0 = No. (If Yes, once 'Purchase' is pressed another screen shows)
     Config["Hints",number] = 0 #<-- Use Hints? 1 = Yes, 0 = No. (No longer optional to include, they're on for good but your choice to use them)
     Config["CheckShipAuto",number] = 1 #<-- Remove shipments automatically? Or manually using !checkshipments
     Config["UseBans",number] = 1 #<-- Ban people from using the shop?
@@ -42,7 +42,7 @@ if(first()){
     
     
     # Misc [Meh not need to touch this.]
-    Config["Version",string] = "1.46"
+    Config["Version",string] = "1.47"
     Config["Test",number] = 0
     State = -1
     E = 0
@@ -233,6 +233,17 @@ if(changed(round(State))){
         EGP:egpMaterial(1,"VGUI/gradient_down")
     } else {
         #EGP:circle_background()
+    }
+    
+    if(State == -4){
+        EGP:egpText(5,"You're Banned",vec2(256,50))
+        EGP:egpAlign(5,1,5)
+        EGP:egpSize(5,35)
+        
+        EGP:egpText(6,"Go On! Fuck Off!",vec2(256,65))
+        EGP:egpAlign(6,1,6)
+        EGP:egpSize(6,15)
+        timer("reset",2500)
     }
     
     if(State == -3){
@@ -860,6 +871,13 @@ if(chatClk(owner())){
     }
 }
 
+if(State == -4){
+    if(clk("reset")){
+        State = 0
+        exit()
+    }
+}
+
 if(State == -1){
     Percent = round(EGP:egpSize(3):x() * 100 / 390)
     EGP:egpSize(3,clamp(EGP:egpSize(3) + vec2(10,0), vec2(0,40),vec2(390, 40)))
@@ -873,6 +891,8 @@ if(State == 0){
         if(Accounts:isBanned(User:steamID()) == "0"){
             State = 1
             timer("Push_Text_Arrays",100)
+        } else {
+            State = -4
         }
     }
 }
@@ -1113,7 +1133,7 @@ if(State == 5){
             if(Add > 0){
                 GiveBack = Add
                 moneyGive(User,GiveBack)
-                Accounts:setData(User:steamID(),GiveBack)
+                Accounts:setData(User:steamID(),(Current - Add))
                 User:debug("Removed $" + Add + " from your account meaning your account now has $" + (Current - Add) + " in it.")
                 Accounts:save(Config["SaveFile",string])
                 State = 0
