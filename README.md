@@ -10,6 +10,7 @@ Manual Installation:
 5. Go ingame, and get the Expression tool out, if you have just launched the game, you'll see the .txt file, if not you need to press the  'Update' button and then it shall appear.
 
 Changelog:
+* -> 1.47 (Fixed withdrawal again after making a new bug) 23/07/2017, 17:37
 * -> 1.46 (Fixed the account balance after withdrawing staying the same, replace x10 etc on shipments with nothing.) 23/07/2017, 15:24
 * -> 1.45 (Fixed the !view commands, now prints table instead of a foreach) 26/06/2017, 17:13
 * -> 1.44 (Added banning, you can now ban people by typing !lban <name> <1/0>) 26/06/2017, 13:50
